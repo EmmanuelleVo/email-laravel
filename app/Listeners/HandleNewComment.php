@@ -29,7 +29,9 @@ class HandleNewComment
     {
         // Envoyer un email à l'admin avec le comment $event->comment;
         Mail::to('admin@monsite.com')
-            ->send(new \App\Mail\CommentPosted($event->comment));
+            //->send(new \App\Mail\CommentPosted($event->comment));
+                // Enregistrer des jobs dans la DB(lourd) ou jobs archivés dans une file d'attente en mémoire
+            ->queue(new \App\Mail\CommentPosted($event->comment));
 
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Events\CommentPosted;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,13 +23,16 @@ Route::get('/', function () {
 Route::get('/comment', function () {
     $comment = new Comment();
     $comment->body = "Normalement on devrait gérer l'envoi d'email ici, ce qui alourdirait notre controller et lui ferait réaliser des tâches annexes à celles qui lui sont normalement dédiées";
+    $comment->save();
 
     // Normalement on devrait gérer l'envoi d'email ici. Ce qui alourdirait notre controller et lui ferait réaliser des tâches annexes à celles qui lui sont normalement dédiées
 
-    $start = microtime(true);
+    $start = hrtime(true);
     CommentPosted::dispatch($comment);
-    $end = microtime(true);
+    /*Mail::to('admin@monsite.com')
+        ->send(new \App\Mail\CommentPosted($comment));*/
+    $end = hrtime(true);
     // émettre l'event qui dit qu'un new comment a été créé pour pouvoir ensuite envoyer un email à ce sujet à notre admin
-    return $end - $start;
+    return ($end - $start)/1e+6; //1 exposant 6
 
 });
